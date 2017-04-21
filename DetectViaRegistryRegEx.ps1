@@ -1,5 +1,5 @@
 ﻿Try {
-    [string]$appNameRegEx = '^Cisco AnyConnect.*'
+    [string]$appNameRegEx = '^Cisco AnyConnect'
     [string]$appVersion = '3.1.10010'
     [bool]$matchFound = $false
     [string[]]$regKeyBranches = 'HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall','HKLM:SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall'
@@ -13,31 +13,28 @@
                 if (($regKeyProperties.DisplayName) -match $appNameRegEx) {
                     switch -Regex ($appVersion) {
                         '^\d\..*' {
-                            if (($regKeyProperties.DisplayVersion -match '\d\..*') -and (($regKeyProperties.DisplayVersion) -ge $appVersion)) {
+                            if (($regKeyProperties.DisplayVersion -match '^\d\..*') -and (($regKeyProperties.DisplayVersion) -ge $appVersion)) {
                                 [bool]$matchFound = $true
                                 Break
-                            } elseif (($regKeyProperties.DisplayVersion) -match '\d{2,}\..*') {
+                            } elseif (($regKeyProperties.DisplayVersion) -match '^\d{2,}\..*') {
                                 [bool]$matchFound = $true
                                 Break
                             }
                         }
                         '^\d{2}\..*' {
-                            if (($regKeyProperties.DisplayVersion) -match '\d\..*') {
+                            if (($regKeyProperties.DisplayVersion -match '^\d{2}\..*') -and (($regKeyProperties.DisplayVersion) -ge $appVersion)) {
                                 [bool]$matchFound = $true
                                 Break
-                            } elseif (($regKeyProperties.DisplayVersion) -match '\d{3,}\..*') {
-                                [bool]$matchFound = $true
-                                Break
-                            } elseif (($regKeyProperties.DisplayVersion) -ge $appVersion) {
+                            } elseif (($regKeyProperties.DisplayVersion) -match '^\d{3,}\..*') {
                                 [bool]$matchFound = $true
                                 Break
                             }
                         }
                         '^\d{3}\..*' {
-                            if (($regKeyProperties.DisplayVersion) -match '\d{1,2}\..*') {
+                            if (($regKeyProperties.DisplayVersion -match '^\d{3}\..*') -and (($regKeyProperties.DisplayVersion) -ge $appVersion)) {
                                 [bool]$matchFound = $true
                                 Break
-                            } elseif (($regKeyProperties.DisplayVersion) -ge $appVersion) {
+                            } elseif (($regKeyProperties.DisplayVersion) -match '^\d{4,}\..*') {
                                 [bool]$matchFound = $true
                                 Break
                             }
@@ -54,6 +51,7 @@
             }
         }
     }
+    Exit 0
 } Catch {
     Exit 60001
 }
